@@ -3,6 +3,8 @@ import numpy as np
 import keras
 import time
 
+from pathlib import Path
+
 from facies_net_func.data_cond import *
 from facies_net_func.modelling import *
 
@@ -23,7 +25,7 @@ def adaptive_lr(input_int):
 # Make the network structure and outline, and train it
 def train_model(segy_obj,file_list,cube_incr,num_epochs = 20,num_classes = None,\
                 num_examples = 50000,batch_size = 32,val_split = 0.2,\
-                opt_patience = 5,data_augmentation = False,keras_model = None,\
+                opt_patience = 5,class_weights = None, data_augmentation = False,keras_model = None,\
                 write_out = False,write_location = 'default_write'):
     # segy_obj: Object returned from the segy_decomp function
     # file_list: numpy array of class adresses and type, returned from the convert function
@@ -37,6 +39,9 @@ def train_model(segy_obj,file_list,cube_incr,num_epochs = 20,num_classes = None,
     # keras_model: existing keras model to be improved if the user wants to improve and not create a new model
     # write_out: boolean; save the trained model to disk or not,
     # write_location: desired location on the disk for the model to be saved
+
+    # Make sure that the write location is cross-platform-compatible
+    log_dir = str(Path.cwd().joinpath('logs').joinpath(write_location))
 
     # Calculate som initial parameters
     cube_size = 2*cube_incr+1
@@ -119,25 +124,18 @@ def train_model(segy_obj,file_list,cube_incr,num_epochs = 20,num_classes = None,
     # Define some initial parameters, and the early stopping and adaptive learning rate callback
     early_stopping  = EarlyStopping(monitor='acc', patience=opt_patience)
     LR_sched        = LearningRateScheduler(schedule = adaptive_lr)
-    tensor_board    = TensorBoard(log_dir='./logs/'+write_location,#histogram_freq=1,
+    tensor_board    = TensorBoard(log_dir=log_dir,#histogram_freq=1,
                                   write_graph=True, write_images=True)
                                   #batch_size=32,write_grads=True,\
                                   #embeddings_freq=1, embeddings_layer_names=None,
                                   #embeddings_metadata=None)
-
-
-
-    # Give extra weight to a given class(by indexes):
-    weight_dict = {0:1,
-                   1:5,
-                   2:1}
 
     # Run the model training
     history = model.fit_generator(generator = tr_generator,
                                   validation_data = val_generator,
                                   callbacks=[early_stopping, tensor_board],
                                   epochs=num_epochs,
-                                  class_weight = weight_dict,
+                                  class_weight = class_weights,
                                   shuffle=False)
 
     # Print the training summary

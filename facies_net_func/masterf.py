@@ -39,6 +39,7 @@ def master(segy_filename,cube_incr,train_dict={},pred_dict={},mode = 'full'):
         batch_size          = train_dict['batch_size']
         val_split           = train_dict['val_split']
         opt_patience        = train_dict['opt_patience']
+        class_weights       = train_dict['class_weights']
         data_augmentation   = train_dict['data_augmentation']
         write_out           = train_dict['save_model']
         write_location      = train_dict['save_location']
@@ -62,6 +63,7 @@ def master(segy_filename,cube_incr,train_dict={},pred_dict={},mode = 'full'):
                             batch_size = batch_size,
                             val_split = val_split,
                             opt_patience = opt_patience,
+                            class_weights = class_weights,
                             data_augmentation = data_augmentation,
                             keras_model = keras_model,
                             write_out = write_out,
