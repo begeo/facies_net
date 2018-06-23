@@ -4,8 +4,8 @@
 import numpy as np
 import keras
 
-from tensorflow.python.keras._impl.keras.engine import InputSpec
-from tensorflow.python.keras import backend as K
+from keras.layers import InputSpec
+from keras import backend as K
 from keras.models import Sequential, Model
 from keras.layers import Dense, Activation, Flatten, Conv3D, Dropout
 from keras.layers.normalization import BatchNormalization
