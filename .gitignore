@@ -1,0 +1,3 @@
+.ipynb_checkpoints/*
+facies_net_func/__pycache__/*
+logs/*
