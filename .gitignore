@@ -1,3 +1,5 @@
 .ipynb_checkpoints/*
 facies_net_func/__pycache__/*
 logs/*
+F3/BE_TEST_MODEL*
+predictions/BE_TEST_MODEL*
